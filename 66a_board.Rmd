@@ -1,0 +1,113 @@
+---
+title: "Registration of cases under section 66A of the IT Act"
+output: 
+  flexdashboard::flex_dashboard:
+    storyboard: true
+    theme: lumen
+    logo: assets/images/cdl_logo_wb.png
+---
+
+### District wise case registrations
+
+<iframe border="0" frameborder="0" 
+    width="100%"
+    height="100%"
+    src="https://www.seektable.com/public/report/0e0faca0d3834ab18c83586da81ae124"></iframe>
+
+*** 
+
+**Prevelance of cases registrations under section 66A of the IT Act**
+
+About the dataset:
+
+- *Data source*: **Ecourts**
+- *State*: **Maharashtra**
+- *Time Period*: **2009-2019**
+
+Process to fetch data from ecourts:
+
+Users can search for the cases registered under a particular section on the eCourts portal. Though this is a helpful feature, we must say that the lack of standardisation practices leads to a cases being tagged under completely different sections, or if the case is tagged correctly, the tags themselves are not standardised.
+
+To mitigate the above discrepancies, we followed a slightly different route: 
+
+- Fetch all cases registered under the IT act in Maharashtra
+- From these, use regexes to fetch cases under 66A
+
+Few important stats (As per ecourts):
+
+- Total cases registered under the IT act in Maharashtra: **6,534**
+- Total cases registered under section 66A of the IT act: **753** or **11.5%**
+
+### Yearly trend of cases registered under 66A
+
+<iframe border="0" frameborder="0" 
+    width="100%"
+    height="100%"
+    src="https://www.seektable.com/public/report/0a5636fb8f414b3abc17332941028c75"></iframe>
+
+*** 
+
+**About case registrations**
+
+*Section 66A* was declared uncontitutional by the Supreme Court on March 24, 2015. There are a lot of stories on the internet about this landmark decision taken by the Supreme Court, but we still see a lot of cases being registered under this zombie section of the IT act. 
+
+- Most cases were registered in the year 2014 and 2015, but 26 cases till now have been registered just in Maharashtra in the year 2019
+- We also look at the orders/judgements available from these cases and the chart gives a breakdown of cases with and without these artifacts (PDF's). 
+
+To know more about 66A, its history and what are we doing about this now, please refer to this reading list from our partner organisations:
+
+- [Section 66A and other legal zombies - IFF Working Paper by Apar Gupta and Abhinav Sekhri](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3275893)
+- [A report by CIS on Shreya Singhal and 66A](https://cis-india.org/internet-governance/blog/shreya-singhal-judgment.pdf)
+- [All of IFF's work on 66A](https://internetfreedom.in/tag/66a/)
+
+### Percentage share of 66A cases by Type of Case (Case category)
+
+<iframe border="0" frameborder="0" 
+    width="100%"
+    height="100%"
+    src="https://www.seektable.com/public/report/de9def95ad644288981745125dfb52f2"></iframe>
+
+### View all cases {data-commentary-width=400}
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+library(DT)
+db_66a_mh <- read.csv("Data/db_66A_mh_drive_link.csv", stringsAsFactors = FALSE)
+# head(db_66a_mh)
+db_66a_mh$dirLink <- glue::glue("<a href='{db_66a_mh$dirLink}' target='_blank'>{db_66a_mh$dirLink}</a>")
+db_66a_mh %>% DT::datatable(escape=FALSE, colnames = c('Case filing date' = 'date_of_filing',
+                                         'Case ID' = 'cino',
+                                         'Case registration date' = 'dt_regis',
+                                         'Case registration year' = 'reg_year',
+                                         'Case Type' = 'type_name',
+                                         'State Code' = 'state_code',
+                                         'State' = 'state_name',
+                                         'District Code' = 'district_code',
+                                         'District' = 'district_name',
+                                         'Order status' = 'pdf_available',
+                                         'Case details'  = 'dirLink'), 
+                            class = 'row-border hover nowrap', filter = 'top')
+
+```
+
+***
+
+View this file on [GoogleDrive](https://docs.google.com/spreadsheets/d/1375GGCGcw3ENA-GpLNsZs5lm1PMYfCh_hl045cW3o8M/edit?usp=sharing)
+
+**Data Dictionary**
+
+- Data source: [eCourts](https://districts.ecourts.gov.in/)
+- Data mined on: *August 7, 2019*
+
+| Column Name       | Description|
+|:------------- |:-------------| 
+| `Case filing date` | Filing date for a case |
+| `Case ID` | CIN number - This is a unique ID generated for every case |
+| `Case registration date` | Case was registered on this date |
+| `Case registration year` | Case was registered in this year |
+| `Case Type` | Type of case aka case category |
+| `State Code` | State Code under which the case was filed |
+| `State` | Name of the parent state |
+| `District Code` | District Code under which the case was filed |
+| `District` | Name of the parent district |
+| `Order status` | Flag to check the availability of a PDF file for a case |
+| `Case details` | Link to view case details |
